@@ -8,7 +8,7 @@ data_models_path = '/mnt/home/jean.alves/Sept_data_models'
 
 if not os.path.isfile('./DeCCaF/data/BAF.parquet'):
 
-    Input_Data = pd.read_csv(data_models_path + '/data/Base.csv')
+    Input_Data = pd.read_csv('./DeCCaF/data/Base.csv')
 
     Input_Data.sort_values(by = 'month', inplace = True)
     Input_Data.reset_index(inplace=True)
