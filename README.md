@@ -16,16 +16,16 @@ The *learning to defer* (L2D) framework aims to improve human-AI collaboration s
 In this repo, we provide users with:
 
 * Code used to run experiments.
-* [Datasets and models](https://drive.google.com/drive/folders/1nAUlxdOmwC6ZNtch3rxwKwNUVrYNmxkV) used in our experiments.
+* [Datasets and models]() used in our experiments.
 
-The submitted version of the paper,and the appendix are available [here](Documents/Paper.pdf).
+The submitted version of the paper,and the appendix are available [here](Documents/paper.pdf).
 
 ## DeCCaF Code
 
 In this section we go through the steps to obtain the code and data used to:
 
 * Generate Synthetic Experts
-*d Generate Capacity Constraints
+* Generate Capacity Constraints
 * Train a ML Classifier
 * Train the DeCCaF method
 * Train our adaptation of the OvA method
