@@ -39,7 +39,7 @@ The sets of capacity constraint tables and the synthetic expert prediction table
 
  ### Step 2: Install the Dependencies needed:
 
-To run our code we include a ".whl" file [here](DeCCaF/Dependencies/). This package is necessary for the generation of our synthetic experts and training our human expertise model. 
+To run our code we include a ".whl" file [here](Dependencies/). This package is necessary for the generation of our synthetic experts and training our human expertise model. 
 
  ### Step 3: Download the Input Dataset
 Our input dataset is the base variant of the Bank Account Fraud Tabular Dataset, available [here](https://www.kaggle.com/datasets/sgpjesus/bank-account-fraud-dataset-neurips-2022?resource=download&select=Base.csv). This dataset should then be placed in the folder [DeCCaF/data](DeCCaF/data).
@@ -94,4 +94,4 @@ The plots, numerical results, and hyperparameter choices relating to our Human E
 The plots, numerical results, and hyperparameter choices relating to the OvA classifiers, detailed in Section D.2, are obtained using the notebook [DeCCaF/ova_models/model_analysis.ipynb](DeCCaF/ova_models/model_analysis.ipynb). 
 
 ### Deferral Results
-Thes results detailed in Section 5 of the [paper](Documents/Paper.pdf) can be obtained by running the notebook [DeCCaF/alert_review.ipynb](DeCCaF/ova_models/model_analysis.ipynb). This notebook generates the tables seen in section 5, as well as many other relevant statistics that were not included for brevity.
+Thes results detailed in Section 5 of the [paper](Documents/paper.pdf) can be obtained by running the notebook [DeCCaF/alert_review.ipynb](DeCCaF/ova_models/model_analysis.ipynb). This notebook generates the tables seen in section 5, as well as many other relevant statistics that were not included for brevity.
