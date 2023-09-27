@@ -129,7 +129,7 @@ data = pd.read_parquet('../data/BAF_deployment_score.parquet')
 orig = pd.read_parquet('../data/BAF.parquet')
 
 val = data.loc[orig['month'] == 6]
-val_preds = pd.read_parquet('/mnt/home/jean.alves/Alert_review_new/experts/expert_info/deployment_predictions.parquet').loc[orig['month'] == 6]
+val_preds = pd.read_parquet('../experts/expert_info/deployment_predictions.parquet').loc[orig['month'] == 6]
 temp = val.copy()
 temp['labels'] = val['fraud_bool']
 val = val.drop(columns = 'fraud_bool')
