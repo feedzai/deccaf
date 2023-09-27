@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 import subprocess
 
-data_models_path = '/mnt/home/jean.alves/Sept_data_models'
+data_models_path = ''
 
 if not os.path.isfile('./DeCCaF/data/BAF.parquet'):
 
