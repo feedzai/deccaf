@@ -8,7 +8,7 @@ The *learning to defer* (L2D) framework aims to improve human-AI collaboration s
 ## Overview
 
 * [Resources](#Resources)
-* [Setting up Code](#DeCCaF Code)
+* [Setting up Code](#DeCCaF-Code)
 * [Replicating our results](#Replicating-our-results)
 * [Notebooks](#Notebooks)
 
