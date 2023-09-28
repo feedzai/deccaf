@@ -8,15 +8,15 @@ The *learning to defer* (L2D) framework aims to improve human-AI collaboration s
 ## Overview
 
 * [Resources](#Resources)
-* [Setting up Code](#Using-the-OpenL2D-Fraud-Detection-Dataset)
-* [Replicating our Experiments](#Replicating-our-experiments)
-* [Notebooks]()
+* [Setting up Code](#DeCCaF Code)
+* [Replicating our results](#Replicating-our-results)
+* [Notebooks](#Notebooks)
 
 ## Resources
 In this repo, we provide users with:
 
 * Code used to run experiments.
-* [Datasets and models]() used in our experiments.
+* [Datasets and models](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view) used in our experiments.
 
 The submitted version of the paper,and the appendix are available [here](Documents/paper.pdf).
 
@@ -45,7 +45,7 @@ To run our code we include a ".whl" file [here](Dependencies/). This package is 
 Our input dataset is the base variant of the Bank Account Fraud Tabular Dataset, available [here](https://www.kaggle.com/datasets/sgpjesus/bank-account-fraud-dataset-neurips-2022?resource=download&select=Base.csv). This dataset should then be placed in the folder [DeCCaF/data](DeCCaF/data).
 
  ### Step 4: Download the Models, Training Datasets and other necessary data
-The models used in our experiments and the dataset with limited expert predictions are available [here](putlink). We also include the transformed input dataset in order to generate synthetic experts. 
+The models used in our experiments and the dataset with limited expert predictions are available [here](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view). We also include the transformed input dataset in order to generate synthetic experts. 
 
  ### Step 5: Load data and Generate Expert Decisions and Capacity Constraints
 
