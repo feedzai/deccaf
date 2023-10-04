@@ -249,8 +249,6 @@ for direc in os.listdir('./testbed/test'):
 # %%
 from joblib import Parallel, delayed
 
-a = []
-
 Parallel(n_jobs=25)(
             delayed(rand_deferral_func)(
                 a[env]['cap'],
