@@ -43,7 +43,7 @@ To replicate the generation of FiFAR, as well as our experiments, please execute
 **Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly
 
 ### Step 1 - Clone the Repo and Download Dataset
-After cloning the repo, please place FiFAR's folder inside the repo's folder, ensuring that your directory looks like this
+After cloning the repo, please extract the [Datasets, models and results](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view) file inside the repo's folder, ensuring that your directory looks like this
 
 ```
 deccaf
@@ -84,17 +84,6 @@ To train the DeCCaF classifiers run [Code/expert_models/run_deccaf.py](Code/expe
 
 To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb)
 
-
-## Replicating our results
-
-### Model Training
-If a user chooses to re-train the ML Model, human expertise model, or OvA classifiers, the results may slightly differ, as we used multiple cores in training, which, as stated in the LightGBM documentation, may lead to slightly different results in each run.
-
-### Deferral Results
-After following the steps detailed in the previous section, the user can run [run_alert.py](DeCCaF/run_alert.py). This script produces the test split assignments for each testing scenario generated in Step 5 of the previous section. These assignments are obtained by using DeCCaF or each of the baselines detailed in Section 5 of the [paper](Documents/paper.pdf).
-
-If the user uses the included models and generated experts, these results will be identical to those included in the paper.
-
 ## Notebooks
 
 We include notebooks to facilitate analysis of:
@@ -103,17 +92,8 @@ We include notebooks to facilitate analysis of:
 * ML Model, Human Expertise Model and OvA Classifiers
 * Deferral Results
 
-### Synthetic Experts' Decisions
-
-The plots and numerical results regarding our synthetic expert's generation process and decision properties are obtained using the notebook [DeCCaF/experts/expert_properties.ipynb](DeCCaF/experts/expert_properties.ipynb). 
-
-### ML Model, Human Expertise Model and OvA Classifiers
-
-The plots, numerical results, and hyperparameter choices relating to our ML model, detailed in Section C.1 of the appendix, are obtained using the script [DeCCaF/ml_model/training_and_predicting.py](DeCCaF/ml_model/training_and_predicting.py). 
-
-The plots, numerical results, and hyperparameter choices relating to our Human Expertise model, detailed in Section D.1, are obtained using the notebook [DeCCaF/expertise_models/model_analysis.ipynb](DeCCaF/expertise_models/model_analysis.ipynb). 
-
-The plots, numerical results, and hyperparameter choices relating to the OvA classifiers, detailed in Section D.2, are obtained using the notebook [DeCCaF/ova_models/model_analysis.ipynb](DeCCaF/ova_models/model_analysis.ipynb). 
-
-### Deferral Results
-Thes results detailed in Section 5 of the [paper](Documents/paper.pdf) can be obtained by running the notebook [DeCCaF/alert_review.ipynb](DeCCaF/ova_models/model_analysis.ipynb). This notebook generates the tables seen in section 5, as well as many other relevant statistics that were not included for brevity.
+We also facilitate further analysis of our generated experts and the conducted benchmarks, by providing users with two Jupyter Notebooks
+* [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb) - which contains
+  * evaluation of the deferral performance of all considered L2D baselines
+  * evaluation of the performance and calibration of Classifier *h*, OvA Classifiers, and DeCCaF's team correctness prediction models.
+* [Code/synthetic_experts/expert_analysis.ipynb](Code/synthetic_experts/expert_analysis.ipynb) - which contains the evaluation of the expert decision-making process properties.
