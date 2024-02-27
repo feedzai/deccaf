@@ -64,7 +64,7 @@ To activate the Python environment with the necessary dependencies please follow
 ### Step 3 - Train the Alert Model and create the set of alerts
 To train the Alert Model, run the file [Code/alert_model/training_and_predicting.py](Code/alert_model/training_and_predicting.py), which will train the Alert Model and score all instances in months 4-8 of the BAF dataset.
 
-Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following generation processes.
+Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
 
 ### Step 4 - Train classifier *h*
 As both of these algorithms share the classifier *h*, we first train this classifier, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
@@ -82,7 +82,7 @@ To train the DeCCaF classifiers run [Code/expert_models/run_deccaf.py](Code/expe
 
 ### Step 7 - Run the Deferral Experiments
 
-To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/results.ipynb)
+To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb)
 
 
 ## Replicating our results
