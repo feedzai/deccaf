@@ -6,7 +6,7 @@
 
 *Learning to defer* (L2D) aims to improve human-AI collaboration systems by deferring decisions to humans when they are more likely to make the correct judgment than a ML classifier. Existing research in L2D overlooks key aspects of real-world systems that impede its practical adoption, such as: i) neglecting cost-sensitive scenarios, where type 1 and type 2 errors have separate costs; ii) requiring concurrent human predictions for every instance of the dataset in training and iii) not dealing with human work capacity constraints. To address these issues, we propose the *Deferral under Cost and Capacity Constraints Framework* (DeCCaF) - a novel L2D approach, employing supervised learning to model the probability of human error with less restrictive data requirements (only one expert prediction per instance), and using constraint programming to globally minimize error cost subject to workload constraints. We test DeCCaF in a series of cost-sensitive fraud detection scenarios with different teams of 9 synthetic fraud analysts, with individual work capacity constraints. We demonstrate that our approach performs significantly better than the baselines in a wide array of scenarios, achieving an average reduction in the misclassification cost of 8.4%.
 
-![alt text](Images/main_scheme.png)
+![alt text](Images/deccaf-scheme.png)
 ## Overview
 
 * [Resources](#Resources)
