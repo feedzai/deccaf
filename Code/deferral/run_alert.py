@@ -16,8 +16,8 @@ def cat_checker(data, features, cat_dict):
     return new_data
 
 def full_auto_func(capacities, batches, testset, env, model, scen, l):
-    print(f'solving {env}/{scen}-l_{l}: fullauto')
-    if os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
+    print(f'solving {env}/{scen}-l_{l}: fullreject')
+    if os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/'  + env):
         return
 
     assignments = pd.DataFrame(columns = ['assignment'])
@@ -29,18 +29,18 @@ def full_auto_func(capacities, batches, testset, env, model, scen, l):
             results.loc[ix] = 1
         
             
-    if not os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
-        os.makedirs(f'./def_results_alert/{scen}-l_{l}/{model}/' + env)
+    if not os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/'  + env):
+        os.makedirs(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env)
 
     assignments = assignments.astype('object')
-    assignments.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
-    results.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
+    assignments.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
+    results.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
 
     return assignments, results
 
 def full_model_func(capacities, batches, testset, expert_preds, env, model, scen, l):
     print(f'solving {env}/{scen}-l_{l}: fullauto')
-    if os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
+    if os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/'  + env):
         return
 
     assignments = pd.DataFrame(columns = ['assignment'])
@@ -52,18 +52,18 @@ def full_model_func(capacities, batches, testset, expert_preds, env, model, scen
             results.loc[ix] = expert_preds.loc[ix,'model#0']
         
             
-    if not os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
-        os.makedirs(f'./def_results_alert/{scen}-l_{l}/{model}/' + env)
+    if not os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/'  + env):
+        os.makedirs(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env)
 
     assignments = assignments.astype('object')
-    assignments.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
-    results.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
+    assignments.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
+    results.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
 
     return assignments, results
 
 def rand_deferral_func(capacities, batches, testset, expert_preds, env, model, scen, l):
     print(f'solving {env}/{scen}-l_{l}: rand')
-    if os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
+    if os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/{env}/'):
         return
 
     assignments = pd.DataFrame(columns = ['assignment'])
@@ -87,19 +87,18 @@ def rand_deferral_func(capacities, batches, testset, expert_preds, env, model, s
                 if len(choice) == 0:
                     done = 1
             
-    if not os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{model}/'  + env):
-        os.makedirs(f'./def_results_alert/{scen}-l_{l}/{model}/' + env)
+    if not os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/'  + env):
+        os.makedirs(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env)
 
     assignments = assignments.astype('object')
-    assignments.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
-    results.to_parquet(f'./def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
+    assignments.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/assignments.parquet')
+    results.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{model}/' + env +'/results.parquet')
 
     return assignments, results
 
 def ova_deferral_func(capacities, batches, testset, expert_preds, model_preds, env, model, seed, scen, l):
-    
-    print(f'Calculating OvA for {env}/{scen}-l_{l}')
-    if os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/'  + env):
+    print(f'solving {env}/{scen}-l_{l}: ova')
+    if os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/'  + env):
         return
 
     assignments = pd.DataFrame(columns = ['assignment'])
@@ -118,23 +117,22 @@ def ova_deferral_func(capacities, batches, testset, expert_preds, model_preds, e
                     results.loc[ix] = expert_preds.loc[ix, choice]
                     break
 
-    if not os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env):
-        os.makedirs(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env)
+    if not os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env):
+        os.makedirs(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env)
 
     assignments = assignments.astype('object')
-    assignments.to_parquet(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env +'/assignments.parquet')
-    results.to_parquet(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env +'/results.parquet')
+    assignments.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env +'/assignments.parquet')
+    results.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/' + env +'/results.parquet')
 
     return assignments, results
 
 
-def jecm_cp_deferral_func(capacities, batches, testset, expert_preds, model_preds, env, model, seed, scen, l):
-    
-    if os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{seed}/{model}/'  + env):
+def deccaf_cp_deferral_func(capacities, batches, testset, expert_preds, model_preds, env, model, seed, scen, l):
+    print(f'solving {env}/{scen}-l_{l}: deccaf')
+    if os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model}/{env}/'):
         return
 
     model_name = model
-    print(f'solving linear {model} for {env}/{scen}-l_{l}')
     assignments = pd.DataFrame(columns = ['assignment'])
     results = pd.DataFrame(columns = ['prediction'])
     for b in np.arange(1,batches['batch'].max()+1):
@@ -195,22 +193,20 @@ def jecm_cp_deferral_func(capacities, batches, testset, expert_preds, model_pred
 
     
     
-    if not os.path.isdir(f'./def_results_alert/{scen}-l_{l}/{seed}/{model_name}/'  + env):
-        os.makedirs(f'./def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env)
+    if not os.path.isdir(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model_name}/'  + env):
+        os.makedirs(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env)
 
     assignments = assignments.astype('object')
-    assignments.to_parquet(f'./def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env +'/assignments.parquet')
-    results.to_parquet(f'./def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env +'/results.parquet')
+    assignments.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env +'/assignments.parquet')
+    results.to_parquet(f'../../Data_and_models/deferral/def_results_alert/{scen}-l_{l}/{seed}/{model_name}/' + env +'/results.parquet')
 
     return assignments, results
 
 
-data_cfg_path = '../data/dataset_cfg.yaml'
-with open(data_cfg_path, 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
 cat_dict = data_cfg['categorical_dict']
-
 
 with open('cfg.yaml', 'r') as infile:
     cfg = yaml.safe_load(infile)
@@ -218,7 +214,7 @@ with open('cfg.yaml', 'r') as infile:
 
 costs_l = cfg['costs']
 
-for scen in os.listdir('../data/alerts'):
+for scen in os.listdir('../../Data_and_models/data/alerts'):
     if len(scen.split('-')) == 3:
         sub = True
     else:
@@ -227,36 +223,36 @@ for scen in os.listdir('../data/alerts'):
         if sub and (l not in cfg['run_sub']):
             continue
         scen = scen.split('.parquet')[0]
-        alerts = pd.read_parquet(f'../data/alerts/{scen}.parquet')
-        exp_pred = (pd.read_parquet(f'../experts/teams/{scen}-l_{l}/expert_info/deployment_predictions.parquet')>=0.5).astype(int)
+        alerts = pd.read_parquet(f'../../Data_and_models/data/alerts/{scen}.parquet')
+        exp_pred = (pd.read_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/deployment_predictions.parquet')>=0.5).astype(int)
         test = alerts.loc[alerts['month'] == 7]
         Classes = np.array(['fn', 'fp', 'tn', 'tp'])
         CATEGORICAL_COLS = data_cfg['data_cols']['categorical']
 
-        with open(f'./test_preds/{scen}-l_{l}/jecm.pkl', 'rb') as fp:
-                jecm_model_preds = pickle.load(fp)
+        with open(f'../../Data_and_models/deferral/test_preds/{scen}-l_{l}/deccaf.pkl', 'rb') as fp:
+                deccaf_model_preds = pickle.load(fp)
 
-        with open(f'./test_preds/{scen}-l_{l}/ova.pkl', 'rb') as fp:
+        with open(f'../../Data_and_models/deferral/test_preds/{scen}-l_{l}/ova.pkl', 'rb') as fp:
                 ova_model_preds = pickle.load(fp)
 
         a = dict()
-        for direc in os.listdir(f'../testbed/testbed/{scen}-l_{l}/test'):
-            if os.path.isfile(f'../testbed/testbed/{scen}-l_{l}/test/' + direc):
+        for direc in os.listdir(f'../../Data_and_models/testbed/{scen}-l_{l}/test'):
+            if os.path.isfile(f'../../Data_and_models/testbed/{scen}-l_{l}/test/' + direc):
                 continue
             a[direc] = dict()
-            a[direc]['bat'] = pd.read_csv(f'../testbed/testbed/{scen}-l_{l}/test/' + direc + '/batches.csv')
-            a[direc]['cap'] = pd.read_csv(f'../testbed/testbed/{scen}-l_{l}/test/' + direc + '/capacity.csv')
+            a[direc]['bat'] = pd.read_csv(f'../../Data_and_models/testbed/{scen}-l_{l}/test/' + direc + '/batches.csv')
+            a[direc]['cap'] = pd.read_csv(f'../../Data_and_models/testbed/{scen}-l_{l}/test/' + direc + '/capacity.csv')
 
-        for seed in jecm_model_preds:
+        for seed in deccaf_model_preds:
             Parallel(n_jobs=5)(
-                    delayed(jecm_cp_deferral_func)(
+                    delayed(deccaf_cp_deferral_func)(
                         a[env]['cap'],
                         a[env]['bat'],
                         test,
                         exp_pred,
-                        1-jecm_model_preds[seed],
+                        1-deccaf_model_preds[seed],
                         env,
-                        f'JECM',
+                        f'DeCCaF',
                         seed,
                         scen,
                         l

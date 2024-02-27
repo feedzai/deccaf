@@ -10,20 +10,11 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from pathlib import Path
 
-
-
-
-
-data_cfg_path = (Path(__file__).parent/'../data/dataset_cfg.yaml').resolve()
-cfg_path = Path(__file__).parent/'cfg.yaml'
-
-with open(data_cfg_path, 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
-with open(cfg_path, 'r') as infile:
+with open('cfg.yaml', 'r') as infile:
     cfg = yaml.safe_load(infile)
-
-
 
 cat_dict = data_cfg['categorical_dict']
 
@@ -43,14 +34,14 @@ def output(data, model, init_score):
 
 
 # DATA LOADING -------------------------------------------------------------------------------------
-scens = os.listdir('../data/alerts/')
+scens = os.listdir('../../Data_and_models/data/alerts/')
 for scen in scens:
     scen = scen.split('.parquet')[0]
     if len(scen.split('-')) == 3:
         sub = True
     else:
         sub = False
-    data = pd.read_parquet(f'../data/alerts/{scen}.parquet')
+    data = pd.read_parquet(f'../../Data_and_models/data/alerts/{scen}.parquet')
 
     LABEL_COL = data_cfg['data_cols']['label']
     TIMESTAMP_COL = data_cfg['data_cols']['timestamp']
@@ -87,17 +78,17 @@ for scen in scens:
 
             for initial in np.arange(init_train, init_train + 2, 0.2):
                 param_space['init_score'] = initial
-                os.makedirs(f'./models/{scen_c}/models', exist_ok=True)
+                os.makedirs(f'../../Data_and_models/classifier_h/models/{scen_c}/models', exist_ok=True)
                 
-                if not (os.path.exists(f'./models/{scen_c}/models/model_{n}')):
-                    opt = hpo_wce.HPO(X_train,X_val,y_train,y_val,w_train,w_val, parameters = param_space, method = 'TPE', path = f"./models/{scen_c}/models/model_{n}")
+                if not (os.path.exists(f'../../Data_and_models/classifier_h/models/{scen_c}/models/model_{n}')):
+                    opt = hpo_wce.HPO(X_train,X_val,y_train,y_val,w_train,w_val, parameters = param_space, method = 'TPE', path = f"../../Data_and_models/classifier_h/models/{scen_c}/models/model_{n}")
                     opt.initialize_optimizer(CATEGORICAL_COLS, cfg['n_jobs'])
                     n +=1
                 else:
                     print('model is trained')
                     n +=1
 
-        models_path = f'./models/{scen_c}/models/'
+        models_path = f'../../Data_and_models/classifier_h/models/{scen_c}/models/'
 
         Trials = []
 
@@ -123,7 +114,7 @@ for scen in scens:
 
         print(selec_ix)
 
-        selected_model_path = f'./models/{scen_c}/models/model_{selec_ix}'
+        selected_model_path = f'../../Data_and_models/classifier_h/models/{scen_c}/models/model_{selec_ix}'
 
         with open(f'{selected_model_path}/best_model.pickle', 'rb') as infile:
             model = pickle.load(infile)
@@ -192,10 +183,10 @@ for scen in scens:
 
         print(f"Test Set -- Model: {avg_cost_model:.5f}. Rejecting all: {avg_cost_full_rej:.5f}")
 
-        os.makedirs(f'./selected_models/{scen_c}', exist_ok=True)
+        os.makedirs(f'../../Data_and_models/classifier_h/selected_models/{scen_c}', exist_ok=True)
 
-        with open(f'./selected_models/{scen_c}/best_model.pickle', 'wb') as outfile:
+        with open(f'../../Data_and_models/classifier_h/selected_models/{scen_c}/best_model.pickle', 'wb') as outfile:
             pickle.dump(model, outfile)
 
-        with open(f'./selected_models/{scen_c}/model_properties.yaml', 'w') as outfile:
+        with open(f'../../Data_and_models/classifier_h/selected_models/{scen_c}/model_properties.yaml', 'w') as outfile:
             yaml.dump(selected_model, outfile)

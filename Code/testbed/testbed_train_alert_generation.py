@@ -6,18 +6,15 @@ import numpy as np
 import pandas as pd
 import yaml
 from pathlib import Path
-from autodefer.models import haic
 
-cfg_path = 'cfg.yaml'
-
-with open(Path(__file__).parent/ cfg_path, 'r') as infile:
+with open('cfg.yaml', 'r') as infile:
     cfg = yaml.safe_load(infile)
 
-with open(Path(__file__).parent/ cfg['data_cfg_path'], 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
 
-scens = os.listdir('../data/alerts/')
+scens = os.listdir('../../Data_and_models/data/alerts/')
 costs = cfg['costs']
 # DATA LOADING -------------------------------------------------------------------------------------
 for scen in scens:
@@ -32,12 +29,9 @@ for scen in scens:
         random.seed(cfg['random_seed'])
         scen = scen.split('.parquet')[0]
         
-        if os.path.isdir('./testbed/{scen}'):
-            print('already_done')
-            continue
-        data = pd.read_parquet(f'../data/alerts/{scen}.parquet')
+        data = pd.read_parquet(f'../../Data_and_models/data/alerts/{scen}.parquet')
 
-        with open(f'../experts/teams/{scen}-l_{l}/expert_info/expert_ids.yaml', 'r') as infile:
+        with open(f'../../Data_and_models/experts/{scen}-l_{l}/expert_ids.yaml', 'r') as infile:
             EXPERT_IDS = yaml.safe_load(infile)
 
 
@@ -60,7 +54,7 @@ for scen in scens:
 
         # EXPERTS ------------------------------------------------------------------------------------------
         # produced in experts/experts_generation.py
-        experts_pred = pd.concat([pd.read_parquet(f'../experts/teams/{scen}-l_{l}/expert_info/train_predictions.parquet'),pd.read_parquet(f'../experts/teams/{scen}-l_{l}/expert_info/deployment_predictions.parquet')])
+        experts_pred = pd.concat([pd.read_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/train_predictions.parquet'),pd.read_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/deployment_predictions.parquet')])
         ##All expert predictions here.
         train_expert_pred = experts_pred.loc[train.index, ]
 
@@ -246,27 +240,13 @@ for scen in scens:
         BATCH_COL = 'batch'
         ASSIGNMENT_COL = 'assignment'
         DECISION_COL = 'decision'
-
-        train_metadata = {
-            'expert_ids': EXPERT_IDS,
-            'data_cols': {
-                **data_cfg['data_cols'],
-                'score': 'model_score',
-                'batch': BATCH_COL,
-                'assignment': ASSIGNMENT_COL,
-                'decision': DECISION_COL,
-            }
-        }
-        with open(cfg['output_paths']['metadata'], 'w') as outfile:
-            yaml.dump(train_metadata, outfile)
-
         # TRAIN --------------------------------------------------------------------------------------------
 
         train_envs = generate_environments(
             df=train,
             batch_cfg=cfg['environments_train']['batch'],
             capacity_cfg=cfg['environments_train']['capacity'],
-            output_dir=f'./testbed/{scen}-l_{l}/train_alert/',
+            output_dir=f'../../Data_and_models/testbed/{scen}-l_{l}/train_alert/',
         )
         for (batch_scheme, capacity_scheme), (train_batches, train_capacity) in train_envs.items():
             env_assignment_and_pred = generate_predictions(
@@ -282,7 +262,7 @@ for scen in scens:
                 .merge(env_assignment_and_pred, left_index=True, right_index=True)
             )
             env_train.to_parquet(
-                f"./testbed/{scen}-l_{l}/train_alert/{batch_scheme}#{capacity_scheme}/train.parquet"
+                f"../../Data_and_models/testbed/{scen}-l_{l}/train_alert/{batch_scheme}#{capacity_scheme}/train.parquet"
             )
 
 

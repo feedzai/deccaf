@@ -32,8 +32,7 @@ def sample(mu,sigma,n,prev_at_5, l, max_cost):
     return experts
 
 
-data_cfg_path = Path(__file__).parent/'../data/dataset_cfg.yaml'
-with open(data_cfg_path, 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
 cat_dict = data_cfg['categorical_dict']
@@ -47,25 +46,23 @@ def cat_checker(data, features, cat_dict):
     
     return new_data
 
-
-
 LABEL_COL = data_cfg['data_cols']['label']
 TIMESTAMP_COL = data_cfg['data_cols']['timestamp']
 PROTECTED_COL = data_cfg['data_cols']['protected']
 CATEGORICAL_COLS = data_cfg['data_cols']['categorical']
 
-scens = os.listdir('../data/alerts/')
+scens = os.listdir('../../Data_and_models/data/alerts/')
 scens = sorted(scens, key=len)
 seeds_set = 0
+
 #Loading ML Model and its properties
-with open(Path(__file__).parent/'../alert_model/model/best_model.pickle', 'rb') as infile:
+with open('../../Data_and_models/alert_model/best_model.pickle', 'rb') as infile:
     ml_model = pickle.load(infile)
 
-with open(Path(__file__).parent/'../alert_model/model/model_properties.pickle', 'rb') as infile:
+with open('../../Data_and_models/alert_model/model_properties.pickle', 'rb') as infile:
     ml_model_properties = pickle.load(infile)
 
-cfg_path = Path(__file__).parent/'./cfg.yaml'
-with open(cfg_path, 'r') as infile:
+with open('./cfg.yaml', 'r') as infile:
     cfg = yaml.safe_load(infile)
 
 costs = cfg['costs']
@@ -80,18 +77,18 @@ for scen in scens:
         np.random.seed(42)
         if sub and (l not in cfg['run_sub']):
             continue
-        data = pd.read_parquet(f'../data/alerts/{scen}.parquet')
+        data = pd.read_parquet(f'../../Data_and_models/data/alerts/{scen}.parquet')
         data = cat_checker(data, CATEGORICAL_COLS, cat_dict)
 
         if sub:
-            os.makedirs(f'./teams/{scen}-l_{l}/expert_info', exist_ok=True)
+            os.makedirs(f'../../Data_and_models/experts/{scen}-l_{l}/', exist_ok=True)
             orig_scen = scen.split('-')[0] + '-' + scen.split('-')[1]
-            for direc in os.listdir(f'./teams/{orig_scen}-l_{l}/expert_info/'):
+            for direc in os.listdir(f'../../Data_and_models/experts/{orig_scen}-l_{l}/'):
                 if direc in ['expert_ids.yaml','full_w_table.parquet','expert_properties.parquet']:
-                    shutil.copy(f'./teams/{orig_scen}-l_{l}/expert_info/{direc}', f'./teams/{scen}-l_{l}/expert_info/{direc}')
+                    shutil.copy(f'../../Data_and_models/experts/{orig_scen}-l_{l}/{direc}', f'../../Data_and_models/experts/{scen}-l_{l}/{direc}')
                 else:
-                    a = pd.read_parquet(f'./teams/{orig_scen}-l_{l}/expert_info/{direc}')
-                    a.loc[a.index.intersection(data.index)].to_parquet(f'./teams/{scen}-l_{l}/expert_info/{direc}')
+                    a = pd.read_parquet(f'../../Data_and_models/experts/{orig_scen}-l_{l}/{direc}')
+                    a.loc[a.index.intersection(data.index)].to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/{direc}')
                     if direc == 'train_predictions.parquet':
                         assert(len( a.loc[a.index.intersection(data.index)]) == len(data.loc[data['month'] == 6]))
                     if direc == 'deployment_predictions.parquet':
@@ -102,8 +99,9 @@ for scen in scens:
         train_test = data.loc[data["month"] != 6]
         val = data.loc[data["month"] == 6]
         y_val = val['fraud_bool']
+        
 
-        with open(cfg_path, 'r') as infile:
+        with open('./cfg.yaml', 'r') as infile:
             cfg = yaml.safe_load(infile)
 
         tn, fp, fn, tp = confusion_matrix(y_val, np.ones(len(y_val))).ravel()
@@ -120,10 +118,10 @@ for scen in scens:
         ml_model_fpr_diff = ml_model_properties['disparity']
         ml_model_fpr = ml_model_properties['fpr']
 
-        with open(Path(__file__).parent/f'../classifier_h/selected_models/{scen}-l_{l}/best_model.pickle', 'rb') as infile:
+        with open(f'../../Data_and_models/classifier_h/selected_models/{scen}-l_{l}/best_model.pickle', 'rb') as infile:
             aux_model = pickle.load(infile)
 
-        with open(Path(__file__).parent/f'../classifier_h/selected_models/{scen}-l_{l}/model_properties.yaml', 'r') as infile:
+        with open(f'../../Data_and_models/classifier_h/selected_models/{scen}-l_{l}/model_properties.yaml', 'r') as infile:
             aux_model_properties = yaml.safe_load(infile)
 
         #Inserting ML Model to the team.
@@ -132,67 +130,59 @@ for scen in scens:
         THRESHOLDS['model#0'] = ml_model_threshold
 
         #Loading or creating the transformed data for expert generation
-        if( os.path.isfile(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_deployment_experts.parquet') and os.path.isfile(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_deployment_experts.parquet')):
-            experts_deployment_X = pd.read_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_deployment_experts.parquet')
-            experts_train_X = pd.read_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_train_experts.parquet')
-            experts_train_X = experts_train_X.drop(columns = 'month')
-            experts_deployment_X = experts_deployment_X.drop(columns = 'month')
-        else:
-            #We use the ML Model training split to fit our experts.
-            #The expert fitting process involves determining the ideal Beta_0 and Beta_1 to obtain the user's desired target FPR and FNR
-            experts_train_X = val.copy().drop(columns=LABEL_COL)
-            #Change customer_age variable to a binary
-            experts_train_X[PROTECTED_COL] = (experts_train_X[PROTECTED_COL] >= 50).astype(int)
+    
+        #We use the ML Model training split to fit our experts.
+        #The expert fitting process involves determining the ideal Beta_0 and Beta_1 to obtain the user's desired target FPR and FNR
+        experts_train_X = val.copy().drop(columns=LABEL_COL)
+        #Change customer_age variable to a binary
+        experts_train_X[PROTECTED_COL] = (experts_train_X[PROTECTED_COL] >= 50).astype(int)
 
-            #Apply same process to the deployment split
-            experts_deployment_X = train_test.copy().drop(columns=LABEL_COL)
-            experts_deployment_X[PROTECTED_COL] = (experts_deployment_X[PROTECTED_COL] >= 50).astype(int)
+        #Apply same process to the deployment split
+        experts_deployment_X = train_test.copy().drop(columns=LABEL_COL)
+        experts_deployment_X[PROTECTED_COL] = (experts_deployment_X[PROTECTED_COL] >= 50).astype(int)
+    
+        #Transform the numerical columns into quantiles and subtract 0.5 so they exist in the [-0.5, 0.5] interval
+        cols_to_quantile = experts_train_X.drop(columns=CATEGORICAL_COLS).columns.tolist()
+        qt = QuantileTransformer(random_state=42)
+        experts_train_X[cols_to_quantile] = (
+            qt.fit_transform(experts_train_X[cols_to_quantile])
+            - 0.5  # centered on 0
+        )
+
+        #Target encode and transform the categorical columns
+        oe = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+        experts_train_X[CATEGORICAL_COLS] = oe.fit_transform(experts_train_X[CATEGORICAL_COLS])
+
+        ss = StandardScaler(with_std=False)
+        experts_train_X[:] = ss.fit_transform(experts_train_X)
+
+        cols_to_scale = [c for c in experts_train_X.columns if c not in cols_to_quantile]
+        desired_range = 1
+        scaling_factors = (
+            desired_range /
+            (experts_train_X[cols_to_scale].max() - experts_train_X[cols_to_scale].min())
+        )
+        experts_train_X[cols_to_scale] *= scaling_factors
+
+        # Preprocess the deployment splits and save the transformed data
+        def preprocess(df):
+            processed_X = df.copy()
+            processed_X[cols_to_quantile] = qt.transform(processed_X[cols_to_quantile]) - 0.5  # centered on 0
+            processed_X[CATEGORICAL_COLS] = oe.transform(processed_X[CATEGORICAL_COLS])
+            processed_X[:] = ss.transform(processed_X)
+            processed_X[cols_to_scale] *= scaling_factors
+
+            return processed_X
+
+        experts_train_X['month'] = val['month']
         
-            #Transform the numerical columns into quantiles and subtract 0.5 so they exist in the [-0.5, 0.5] interval
-            cols_to_quantile = experts_train_X.drop(columns=CATEGORICAL_COLS).columns.tolist()
-            qt = QuantileTransformer(random_state=42)
-            experts_train_X[cols_to_quantile] = (
-                qt.fit_transform(experts_train_X[cols_to_quantile])
-                - 0.5  # centered on 0
-            )
-
-            #Target encode and transform the categorical columns
-            oe = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
-            experts_train_X[CATEGORICAL_COLS] = oe.fit_transform(experts_train_X[CATEGORICAL_COLS])
-
-            ss = StandardScaler(with_std=False)
-            experts_train_X[:] = ss.fit_transform(experts_train_X)
-
-            cols_to_scale = [c for c in experts_train_X.columns if c not in cols_to_quantile]
-            desired_range = 1
-            scaling_factors = (
-                desired_range /
-                (experts_train_X[cols_to_scale].max() - experts_train_X[cols_to_scale].min())
-            )
-            experts_train_X[cols_to_scale] *= scaling_factors
-
-            # Preprocess the deployment splits and save the transformed data
-            def preprocess(df):
-                processed_X = df.copy()
-                processed_X[cols_to_quantile] = qt.transform(processed_X[cols_to_quantile]) - 0.5  # centered on 0
-                processed_X[CATEGORICAL_COLS] = oe.transform(processed_X[CATEGORICAL_COLS])
-                processed_X[:] = ss.transform(processed_X)
-                processed_X[cols_to_scale] *= scaling_factors
-
-                return processed_X
-
-            experts_train_X['month'] = val['month']
-            
-            experts_deployment_X = preprocess(experts_deployment_X)
-            experts_deployment_X['month'] = train_test['month']
-            os.makedirs(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/', exist_ok= True)
-            experts_deployment_X.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_deployment_experts.parquet')
-            experts_train_X.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/transformed_data/X_train_experts.parquet')
-            experts_train_X = experts_train_X.drop(columns = 'month')
-            experts_deployment_X = experts_deployment_X.drop(columns = 'month')
+        experts_deployment_X = preprocess(experts_deployment_X)
+        experts_deployment_X['month'] = train_test['month']
+        experts_train_X = experts_train_X.drop(columns = 'month')
+        experts_deployment_X = experts_deployment_X.drop(columns = 'month')
 
         # Synthetic Expert Generation -----------------------------------------------------------------------------------
-        if  os.path.isdir(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/'):
+        if  os.path.isdir(f'../../Data_and_models/experts/{scen}-l_{l}/'):
             print('Experts already Generated')
         else:
             #This function allows a user to create other groups by only defining the parameters that differ from the regular experts
@@ -290,12 +280,12 @@ for scen in scens:
                     full_w_table.loc[expert, 'fn_beta'] = expert_team[expert].fnr_beta
                     full_w_table.loc[expert, 'alpha'] = expert_team[expert].alpha
 
-            os.makedirs(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info', exist_ok = True)
-            full_w_table.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/full_w_table.parquet')
+            os.makedirs(f'../../Data_and_models/experts/{scen}-l_{l}/', exist_ok = True)
+            full_w_table.to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/full_w_table.parquet')
 
             expert_properties = pd.DataFrame(expert_properties_list)
 
-            expert_properties.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/expert_properties.parquet')
+            expert_properties.to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/expert_properties.parquet')
 
             #Obtaining the predictions ----------------------------------------------------------------------------------
 
@@ -314,7 +304,7 @@ for scen in scens:
                     }}
             )
 
-            train_expert_pred.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/train_predictions.parquet')
+            train_expert_pred.to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/train_predictions.parquet')
 
             deployment_expert_pred = expert_team.predict(
                 index=train_test.index,
@@ -328,7 +318,7 @@ for scen in scens:
                     }
                 },
             )
-            deployment_expert_pred.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/deployment_predictions.parquet')
+            deployment_expert_pred.to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/deployment_predictions.parquet')
 
             #saving the probability of error associated with each instance
             perror = pd.DataFrame()
@@ -341,12 +331,12 @@ for scen in scens:
                     perror[column2] = expert_team[expert].error_prob['p_of_fp']
 
 
-            perror.to_parquet(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/p_of_error.parquet')
+            perror.to_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/p_of_error.parquet')
 
 
             #Saving the generated experts' ids
             # %%
-            with open(Path(__file__).parent/f'./teams/{scen}-l_{l}/expert_info/expert_ids.yaml', 'w') as outfile:
+            with open(f'../../Data_and_models/experts/{scen}-l_{l}/expert_ids.yaml', 'w') as outfile:
                 yaml.dump(EXPERT_IDS, outfile)
 
 

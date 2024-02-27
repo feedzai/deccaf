@@ -1,19 +1,15 @@
 # %%
 import os
 import random
-
 import numpy as np
 import pandas as pd
 import yaml
 from pathlib import Path
-from autodefer.models import haic
 
-cfg_path = 'cfg.yaml'
-
-with open(Path(__file__).parent/ cfg_path, 'r') as infile:
+with open('cfg.yaml', 'r') as infile:
     cfg = yaml.safe_load(infile)
 
-with open(Path(__file__).parent/ cfg['data_cfg_path'], 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
 # BATCH & CAPACITY ---------------------------------------------------------------------------------
@@ -196,7 +192,7 @@ def generate_environments(df, batch_cfg: dict, capacity_cfg: dict, output_dir=No
 
     return environments
 
-scens = os.listdir('../data/alerts/')
+scens = os.listdir('../../Data_and_models/data/alerts/')
 costs = cfg['costs']
 # DATA LOADING -------------------------------------------------------------------------------------
 for scen in scens:
@@ -215,9 +211,9 @@ for scen in scens:
             continue
         random.seed(cfg['random_seed'])
         scen = scen.split('.parquet')[0]
-        data = pd.read_parquet(f'../data/alerts/{scen}.parquet')
+        data = pd.read_parquet(f'../../Data_and_models/data/alerts/{scen}.parquet')
 
-        with open(f'../experts/teams/{scen}-l_{l}/expert_info/expert_ids.yaml', 'r') as infile:
+        with open(f'../../Data_and_models/experts/{scen}-l_{l}/expert_ids.yaml', 'r') as infile:
             EXPERT_IDS = yaml.safe_load(infile)
 
         TIMESTAMP_COL = data_cfg['data_cols']['timestamp']
@@ -239,7 +235,7 @@ for scen in scens:
 
         # EXPERTS ------------------------------------------------------------------------------------------
         # produced in experts/experts_generation.py
-        experts_pred = pd.read_parquet(f'../experts/teams/{scen}-l_{l}/expert_info/deployment_predictions.parquet')
+        experts_pred = pd.read_parquet(f'../../Data_and_models/experts/{scen}-l_{l}/deployment_predictions.parquet')
 
         test_expert_pred = experts_pred.loc[test.index, ]
 
@@ -251,33 +247,19 @@ for scen in scens:
         ASSIGNMENT_COL = 'assignment'
         DECISION_COL = 'decision'
 
-        train_metadata = {
-            'expert_ids': EXPERT_IDS,
-            'data_cols': {
-                **data_cfg['data_cols'],
-                'score': 'model_score',
-                'batch': BATCH_COL,
-                'assignment': ASSIGNMENT_COL,
-                'decision': DECISION_COL,
-            }
-        }
-        with open(Path(__file__).parent/cfg['output_paths']['metadata'], 'w') as outfile:
-            yaml.dump(train_metadata, outfile)
-
-
         # TEST ---------------------------------------------------------------------------------------------
-        os.makedirs(Path(__file__).parent/f'./testbed/{scen}-l_{l}/test/', exist_ok=True)
+        os.makedirs(f'../../Data_and_models/testbed/{scen}-l_{l}/test/', exist_ok=True)
         test.index.name = 'case_id'
         test = test.rename(columns = {'fraud_bool': 'fraud_label'})
-        test.to_parquet(Path(__file__).parent/ f'./testbed/{scen}-l_{l}/test/test.parquet')
+        test.to_parquet(Path(__file__).parent/ f'../../Data_and_models/testbed/{scen}-l_{l}/test/test.parquet')
         test_expert_pred.index.name = 'case_id'
-        test_expert_pred.to_parquet(Path(__file__).parent / f'./testbed/{scen}-l_{l}/test/test_expert_pred.parquet')
+        test_expert_pred.to_parquet(Path(__file__).parent / f'../../Data_and_models/testbed/{scen}-l_{l}/test/test_expert_pred.parquet')
 
         generate_environments(
             df=test,
             batch_cfg=cfg['environments_test']['batch'],
             capacity_cfg=cfg['environments_test']['capacity'],
-            output_dir=f'./testbed/{scen}-l_{l}/test/'
+            output_dir=f'../../Data_and_models/testbed/{scen}-l_{l}/test/'
         )
 
         print('Testbed generated.')

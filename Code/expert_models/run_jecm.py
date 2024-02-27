@@ -7,9 +7,7 @@ import hpo
 import pickle
 
 
-data_cfg_path = '../data/dataset_cfg.yaml'
-
-with open(data_cfg_path, 'r') as infile:
+with open('../data/dataset_cfg.yaml', 'r') as infile:
     data_cfg = yaml.safe_load(infile)
 
 with open('cfg.yaml', 'r') as infile:
@@ -30,7 +28,7 @@ def cat_checker(data, features, cat_dict):
     return new_data
 
 
-scens = os.listdir('../data/alerts/')
+scens = os.listdir('../../Data_and_models/data/alerts/')
 costs = cfg['costs']
 
 for scen in scens:
@@ -42,15 +40,15 @@ for scen in scens:
         if sub and (l not in cfg['run_sub']):
             continue
         scen = scen.split('.parquet')[0]
-        expert_ids_path = f'../experts/teams/{scen}-l_{l}/expert_info/expert_ids.yaml'
+        expert_ids_path = f'../../Data_and_models/experts/{scen}-l_{l}/expert_ids.yaml'
 
         with open(expert_ids_path, 'r') as infile:
             EXPERT_IDS = yaml.safe_load(infile)
 
         cat_dict['assignment'] = EXPERT_IDS['human_ids'] + EXPERT_IDS['model_ids']
 
-        for train in os.listdir(f'../testbed/testbed/{scen}-l_{l}/train_alert'):
-            train_set = pd.read_parquet(f'../testbed/testbed/{scen}-l_{l}/train_alert/{train}/train.parquet')
+        for train in os.listdir(f'../../Data_and_models/testbed/{scen}-l_{l}/train_alert'):
+            train_set = pd.read_parquet(f'../../Data_and_models/testbed/{scen}-l_{l}/train_alert/{train}/train.parquet')
             train_set = train_set.loc[train_set["assignment"] != 'model#0']
             train_set = cat_checker(train_set, data_cfg['data_cols']['categorical'] + ['assignment'], cat_dict)
             print(f'Fitting start for {train}, conjoined')
@@ -67,15 +65,15 @@ for scen in scens:
             train_y = (train_set['decision'] == train_set['fraud_bool']).astype(int)
             val_y = (val_set['decision'] == val_set['fraud_bool']).astype(int)
 
-            if not (os.path.exists(f'./jecm/{scen}-l_{l}/{train}/')):
-                os.makedirs(f'./jecm/{scen}-l_{l}/{train}/')
+            if not (os.path.exists(f'../../Data_and_models/expert_models/deccaf/{scen}-l_{l}/{train}/')):
+                os.makedirs(f'../../Data_and_models/expert_models/deccaf/{scen}-l_{l}/{train}/')
             
-            if not (os.path.exists(f'./jecm/{scen}-l_{l}/{train}/best_model.pickle')):
-                opt = hpo.HPO(train_x,val_x,train_y,val_y,train_w, val_w, method = 'TPE', path = f'./jecm/{scen}-l_{l}/{train}/')
+            if not (os.path.exists(f'../../Data_and_models/expert_models/deccaf/{scen}-l_{l}/{train}/best_model.pickle')):
+                opt = hpo.HPO(train_x,val_x,train_y,val_y,train_w, val_w, method = 'TPE', path = f'../../Data_and_models/expert_models/deccaf/{scen}-l_{l}/{train}/')
                 opt.initialize_optimizer(CATEGORICAL_COLS, 10)
 
             
-for scen in os.listdir('../data/alerts'):
+for scen in os.listdir('../../Data_and_models/data/alerts'):
     if len(scen.split('-')) == 3:
         sub = True
     else:
@@ -84,10 +82,10 @@ for scen in os.listdir('../data/alerts'):
         if sub and (l not in cfg['run_sub']):
             continue
         scen = scen.split('.parquet')[0]
-        test = pd.read_parquet(f'../testbed/testbed/{scen}-l_{l}/test/test.parquet')
-        test_expert_pred = pd.read_parquet(f'../testbed/testbed/{scen}-l_{l}/test/test_expert_pred.parquet')
+        test = pd.read_parquet(f'../../Data_and_models/testbed/{scen}-l_{l}/test/test.parquet')
+        test_expert_pred = pd.read_parquet(f'../../Data_and_models/testbed/{scen}-l_{l}/test/test_expert_pred.parquet')
 
-        expert_ids_path = f'../experts/teams/{scen}-l_{l}/expert_info/expert_ids.yaml'
+        expert_ids_path = f'../../Data_and_models/experts/{scen}-l_{l}/expert_ids.yaml'
         
         with open(expert_ids_path, 'r') as infile:
             EXPERT_IDS = yaml.safe_load(infile)
@@ -100,9 +98,9 @@ for scen in os.listdir('../data/alerts'):
 
         preds_conj = dict()
 
-        for env_id in os.listdir(f'./jecm/{scen}-l_{l}'):
+        for env_id in os.listdir(f'../../Data_and_models/expert_models/deccaf/{scen}-l_{l}'):
             table = pd.DataFrame(index = test.index, columns = EXPERT_IDS['human_ids'])
-            with open(f"./jecm/{scen}-l_{l}/{env_id}/best_model.pickle", 'rb') as fp:
+            with open(f"../../Data_and_models/expert_models/deccaf/{scen}-l_{l}/{env_id}/best_model.pickle", 'rb') as fp:
                 model = pickle.load(fp)
             
             for expert in EXPERT_IDS['human_ids']:
@@ -117,7 +115,7 @@ for scen in os.listdir('../data/alerts'):
 
             preds_conj[env_id.split('#')[0] + '#' + env_id.split('#')[1]] = table
         
-        os.makedirs(f"../deferral/test_preds/{scen}-l_{l}/", exist_ok = True)
-        with open(f"../deferral/test_preds/{scen}-l_{l}/jecm.pkl", "wb") as out_file:
+        os.makedirs(f"../../Data_and_models/deferral/test_preds/{scen}-l_{l}/", exist_ok = True)
+        with open(f"../../Data_and_models/deferral/test_preds/{scen}-l_{l}/deccaf.pkl", "wb") as out_file:
             pickle.dump(preds_conj, out_file)
 

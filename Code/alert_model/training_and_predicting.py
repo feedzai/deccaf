@@ -27,7 +27,7 @@ def cat_checker(data, features, cat_dict):
     return new_data
 
 # DATA LOADING -------------------------------------------------------------------------------------
-data = pd.read_csv('../data/Base.csv')
+data = pd.read_csv('../../Data_and_models/data/Base.csv')
 LABEL_COL = data_cfg['data_cols']['label']
 TIMESTAMP_COL = data_cfg['data_cols']['timestamp']
 PROTECTED_COL = data_cfg['data_cols']['protected']
