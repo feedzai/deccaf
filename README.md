@@ -1,67 +1,89 @@
-﻿# **DeCCaF**
+﻿﻿# **DeCCaF**
 
 ## Abstract
 
-The *learning to defer* (L2D) framework aims to improve human-AI collaboration systems by deferring decisions to humans when they are more likely to make the correct judgment than a ML classifier. Existing research in L2D overlooks key aspects of real-world systems that impede its practical adoption, such as: i) neglecting cost-sensitive scenarios; ii) requiring concurrent human predictions for every instance of the dataset in training and iii) not dealing with human capacity constraints. To address these issues, we propose the *deferral under cost and capacity constraint framework* (DeCCaF). A novel L2D approach: DeCCaF employs supervised learning to model the probability of human error with less restrictive data requirements (only one expert prediction per instance), and uses constraint programming to globally minimize error cost subject to capacity constraints. We employ DeCCaF in a cost-sensitive fraud detection setting with a team of 50 synthetic fraud analysts, subject to a wide array of realistic human work capacity constraints, showing that DeCCaF significantly outperforms L2D baselines, reducing average misclassification costs by 9 \%. Our code and testbed are available at https://anonymous.4open.science/r/deccaf-1245/
+*Learning to defer* (L2D) aims to improve human-AI collaboration systems by deferring decisions to humans when they are more likely to make the correct judgment than a ML classifier. Existing research in L2D overlooks key aspects of real-world systems that impede its practical adoption, such as: i) neglecting cost-sensitive scenarios, where type 1 and type 2 errors have separate costs; ii) requiring concurrent human predictions for every instance of the dataset in training and iii) not dealing with human work capacity constraints. To address these issues, we propose the *Deferral under Cost and Capacity Constraints Framework* (DeCCaF) - a novel L2D approach, employing supervised learning to model the probability of human error with less restrictive data requirements (only one expert prediction per instance), and using constraint programming to globally minimize error cost subject to workload constraints. We test DeCCaF in a series of cost-sensitive fraud detection scenarios with different teams of 9 synthetic fraud analysts, with individual work capacity constraints. We demonstrate that our approach performs significantly better than the baselines in a wide array of scenarios, achieving an average reduction in the misclassification cost of 8.4%.
 
 ![alt text](Images/main_scheme.png)
 ## Overview
 
 * [Resources](#Resources)
-* [Setting up Code](#DeCCaF-Code)
-* [Replicating our results](#Replicating-our-results)
+* [Replicating Results](#Replicating-Results)
 * [Notebooks](#Notebooks)
 
 ## Resources
-In this repo, we provide users with:
+In order to ensure complete reproducibility, we provide users with:
 
-* Code used to run experiments.
-* [Datasets and models](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view) used in our experiments.
+* Code used to run experiments and produce synthetic data.
+* [Datasets, models and results](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view) used/produced in our experiments.
+   * Synthetically Generated Data - Expert predictions, training scenarios and capacity constraints
+   * ML models - Alert Model, OvA Classifiers and Human Expertise Model
+   * Results - Set of assignments and decisions resulting from the deferral experiments
 
-The submitted version of the paper,and the appendix are available [here](Documents/paper.pdf).
+*Note*: This data is included due to the fact that LightGBM models are known to produce different results depending on operating system, python versions, number of cores in training, among other factors
+
+The submitted version of the paper and the appendix are available [here](Documents/paper.pdf).
+
+### Creating the Python Environment
+
+Requirements:
+* anaconda3
+  
+Before using any of the provided code, to ensure reproducibility, please create and activate the Python environment by running
+
+```
+conda env create -f environment.yml
+conda activate deccaf-env
+```
 
 ## DeCCaF Code
 
-In this section we go through the steps to obtain the code and data used to:
+To replicate the generation of FiFAR, as well as our experiments, please execute the following steps:
 
-* Generate Synthetic Experts
-* Generate Capacity Constraints
-* Train a ML Classifier
-* Train the DeCCaF method
-* Train our adaptation of the OvA method
-* Assign Under Capacity Constraints
+**Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly
 
+### Step 1 - Clone the Repo and Download Dataset
+After cloning the repo, please place FiFAR's folder inside the repo's folder, ensuring that your directory looks like this
 
+```
+deccaf
+│   README.md
+│   .gitignore  
+│   environment.yml
+│
+└─── Code
+│   │   ...
+│   
+└─── Data_and_models
+    │   ...
+```
 
+### Step 2 - Activate the Environment
+To activate the Python environment with the necessary dependencies please follow [these steps](#Creating-the-Python-Environment)
 
- ### Step 1: Download the Code in this repo:
-The sets of capacity constraint tables and the synthetic expert prediction table are generated by using the input dataset and a set of configs included in this repo. For easy use of our dataset and available notebooks, we encourage users to download the repo in its entirety.
+### Step 3 - Train the Alert Model and create the set of alerts
+To train the Alert Model, run the file [Code/alert_model/training_and_predicting.py](Code/alert_model/training_and_predicting.py), which will train the Alert Model and score all instances in months 4-8 of the BAF dataset.
 
- ### Step 2: Install the Dependencies needed:
+Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following generation processes.
 
-To run our code we include a ".whl" file [here](Dependencies/). This package is necessary for the generation of our synthetic experts and training our human expertise model. 
+### Step 4 - Train classifier *h*
+As both of these algorithms share the classifier *h*, we first train this classifier, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
+The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
- ### Step 3: Download the Input Dataset
-Our input dataset is the base variant of the Bank Account Fraud Tabular Dataset, available [here](https://www.kaggle.com/datasets/sgpjesus/bank-account-fraud-dataset-neurips-2022?resource=download&select=Base.csv). This dataset should then be placed in the folder [DeCCaF/data](DeCCaF/data).
+### Step 4 - Generate the Synthetic Expert predictions
+To generate all the data within the folder "synthetic_experts" of FiFAR, run the script [Code/synthetic_experts/expert_gen.py](Code/synthetic_experts/expert_gen.py), which will generate the synthetic expert predictions, and also save their sampled parameters, calculated probabilities of error for each alerted instance, as well as the list of expert id's.
 
- ### Step 4: Download the Models, Training Datasets and other necessary data
-The models used in our experiments and the dataset with limited expert predictions are available [here](https://drive.google.com/file/d/1R6NgMgLd4wrRiQz5WrZUzFx0ljCHgDZl/view). We also include the transformed input dataset in order to generate synthetic experts. 
+### Step 5 - Generate the Training and Testing Scenarios
+To generate all training scenarios, run the script [Code/testbed/testbed_train_alert_generation.py](Code/testbed/testbed_train_alert_generation.py).
+To generate the capacity constraints to be applied to each of the deferral methods in testing, run the script [Code/testbed/testbed_test_generation.py](Code/testbed/testbed_test_generation.py).
 
- ### Step 5: Load data and Generate Expert Decisions and Capacity Constraints
+To train the OvA Classifiers run [Code/expert_models/run_ova.py](Code/expert_models/run_ova.py). 
+To train the DeCCaF classifiers run [Code/expert_models/run_deccaf.py](Code/expert_models/run_deccaf.py)
 
-To place all the necessary data in the correct directories the user needs to run "[load\_data.py](load_data.py)". The script only requires the user to specify the directory of the datasets downloaded in Step 4.
+### Step 7 - Run the Deferral Experiments
 
-The script will then run, in order:
+To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/results.ipynb)
 
-* [ML classifier training script](DeCCaF/ml_model/training_and_predicting.py) - verifying the existence of the necessary files and obtaining the model score for each instance
-* [Expert generation script](DeCCaF/experts/expert_gen.py) - generating our team of synthetic experts
-* [Testset generation script](DeCCaF/testbed/testbed_test_generation.py) - generating the set of capacity constraints to be used in testing
-
-The rest of the necessary materials are included in the downloaded data, as the model training and deferral process take extensive amounts of time. The model training and deferral processes are done by the following files:
-
-* [Human expertise model training script](DeCCaF/expertise_models/training.py) - trains/loads the human expertise models, generating the predictions for probability of error
-* [OvA classifiers training script](DeCCaF/expertise_models/training.py) - trains/loads the OvA classifiers, generating the model's output
-* [Deferral script](DeCCaF/run_alert.py) - runs the deferral utilizing the results generated by the previous scripts 
 
 ## Replicating our results
 
