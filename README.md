@@ -24,7 +24,7 @@ In order to ensure complete reproducibility, we provide users with:
 
 *Note*: This data is included due to the fact that LightGBM models are known to produce different results depending on operating system, python versions, number of cores in training, among other factors
 
-The submitted version of the paper and the appendix are available [here](Documents/paper.pdf).
+The submitted version of the paper and the appendix are available [here](Documents/Paper.pdf).
 
 ### Creating the Python Environment
 
