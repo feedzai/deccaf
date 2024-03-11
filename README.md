@@ -6,7 +6,7 @@
 
 *Learning to defer* (L2D) aims to improve human-AI collaboration systems by deferring decisions to humans when they are more likely to make the correct judgment than a ML classifier. Existing research in L2D overlooks key aspects of real-world systems that impede its practical adoption, such as: i) neglecting cost-sensitive scenarios, where type 1 and type 2 errors have separate costs; ii) requiring concurrent human predictions for every instance of the dataset in training and iii) not dealing with human work capacity constraints. To address these issues, we propose the *Deferral under Cost and Capacity Constraints Framework* (DeCCaF) - a novel L2D approach, employing supervised learning to model the probability of human error with less restrictive data requirements (only one expert prediction per instance), and using constraint programming to globally minimize error cost subject to workload constraints. We test DeCCaF in a series of cost-sensitive fraud detection scenarios with different teams of 9 synthetic fraud analysts, with individual work capacity constraints. We demonstrate that our approach performs significantly better than the baselines in a wide array of scenarios, achieving an average reduction in the misclassification cost of 8.4%.
 
-![alt text](Images/main_scheme.png)
+![alt text](Images/deccaf-scheme.png)
 ## Overview
 
 * [Resources](#Resources)
@@ -15,7 +15,6 @@
 
 ## Resources
 In order to ensure complete reproducibility, we provide users with:
-
 * Code used to run experiments and produce synthetic data.
 * [Datasets, models and results](https://drive.google.com/file/d/16BLuZzdBLOsjs77WtytS7hZqe7aPDyTX/view?usp=sharing) used/produced in our experiments.
    * Synthetically Generated Data - Expert predictions, training scenarios and capacity constraints
@@ -24,7 +23,7 @@ In order to ensure complete reproducibility, we provide users with:
 
 *Note*: This data is included due to the fact that LightGBM models are known to produce different results depending on operating system, python versions, number of cores in training, among other factors
 
-The submitted version of the paper and the appendix are available [here](Documents/paper.pdf).
+The submitted version of the paper and the appendix are available [here](Documents/Paper.pdf).
 
 ### Creating the Python Environment
 
@@ -40,7 +39,7 @@ conda activate deccaf-env
 
 ## DeCCaF Code
 
-To replicate the generation of FiFAR, as well as our experiments, please execute the following steps:
+To replicate the generation of the synthetic data, as well as our experiments, please execute the following steps:
 
 **Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly
 
@@ -69,20 +68,13 @@ To train the Alert Model, run the file [Code/alert_model/training_and_predicting
 Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
 
 ### Step 4 - Train classifier *h*
-As both of these algorithms share the classifier *h*, we first train this classifier, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
+As both DeCCaF and OvAshare the classifier *h*, we train it first, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
 The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
-### Step 5 - Generate the Synthetic Expert predictions
-To generate all the data within the folder "synthetic_experts" of FiFAR, run the script [Code/synthetic_experts/expert_gen.py](Code/synthetic_experts/expert_gen.py), which will generate the synthetic expert predictions, and also save their sampled parameters, calculated probabilities of error for each alerted instance, as well as the list of expert id's.
+### Step 5 - Train DeCCaF and OvA systems
+To train the DeCCaF system run the script [Code/expert_models/run_deccaf.py](Code/expert_models/run_deccaf.py). To train the OvA system run the script [Code/expert_models/run_ova.py](Code/expert_models/run_ova.py).
 
-### Step 6 - Generate the Training and Testing Scenarios
-To generate all training scenarios, run the script [Code/testbed/testbed_train_alert_generation.py](Code/testbed/testbed_train_alert_generation.py).
-To generate the capacity constraints to be applied to each of the deferral methods in testing, run the script [Code/testbed/testbed_test_generation.py](Code/testbed/testbed_test_generation.py).
-
-To train the OvA Classifiers run [Code/expert_models/run_ova.py](Code/expert_models/run_ova.py). 
-To train the DeCCaF classifiers run [Code/expert_models/run_deccaf.py](Code/expert_models/run_deccaf.py)
-
-### Step 7 - Run the Deferral Experiments
+### Step 6 - Run the Deferral Experiments
 
 To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb)
 
