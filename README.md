@@ -73,7 +73,7 @@ As both DeCCaF and OvAshare the classifier *h*, we train it first, by running th
 The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
 ### Step 5 - Train DeCCaF and OvA systems
-To train the DeCCaF system run the script [Code/expert_models/run_deccaf.py]. To train the OvA system run the script [Code/expert_models/run_ova.py].
+To train the DeCCaF system run the script [Code/expert_models/run_deccaf.py](Code/expert_models/run_deccaf.py). To train the OvA system run the script [Code/expert_models/run_ova.py](Code/expert_models/run_ova.py).
 
 ### Step 6 - Run the Deferral Experiments
 
