@@ -15,7 +15,6 @@
 
 ## Resources
 In order to ensure complete reproducibility, we provide users with:
-
 * Code used to run experiments and produce synthetic data.
 * [Datasets, models and results](https://drive.google.com/file/d/16BLuZzdBLOsjs77WtytS7hZqe7aPDyTX/view?usp=sharing) used/produced in our experiments.
    * Synthetically Generated Data - Expert predictions, training scenarios and capacity constraints
