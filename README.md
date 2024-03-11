@@ -69,10 +69,13 @@ To train the Alert Model, run the file [Code/alert_model/training_and_predicting
 Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
 
 ### Step 4 - Train classifier *h*
-As both of these algorithms share the classifier *h*, we first train this classifier, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
+As both DeCCaF and OvAshare the classifier *h*, we train it first, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
 The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
-### Step 5 - Run the Deferral Experiments
+### Step 5 - Train DeCCaF and OvA systems
+To train the DeCCaF system run the script [Code/expert_models/run_deccaf.py]. To train the OvA system run the script [Code/expert_models/run_ova.py].
+
+### Step 6 - Run the Deferral Experiments
 
 To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb)
 
