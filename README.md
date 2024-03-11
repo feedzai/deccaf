@@ -72,17 +72,7 @@ Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py
 As both of these algorithms share the classifier *h*, we first train this classifier, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
 The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
-### Step 5 - Generate the Synthetic Expert predictions
-To generate all the data within the folder "synthetic_experts" of FiFAR, run the script [Code/synthetic_experts/expert_gen.py](Code/synthetic_experts/expert_gen.py), which will generate the synthetic expert predictions, and also save their sampled parameters, calculated probabilities of error for each alerted instance, as well as the list of expert id's.
-
-### Step 6 - Generate the Training and Testing Scenarios
-To generate all training scenarios, run the script [Code/testbed/testbed_train_alert_generation.py](Code/testbed/testbed_train_alert_generation.py).
-To generate the capacity constraints to be applied to each of the deferral methods in testing, run the script [Code/testbed/testbed_test_generation.py](Code/testbed/testbed_test_generation.py).
-
-To train the OvA Classifiers run [Code/expert_models/run_ova.py](Code/expert_models/run_ova.py). 
-To train the DeCCaF classifiers run [Code/expert_models/run_deccaf.py](Code/expert_models/run_deccaf.py)
-
-### Step 7 - Run the Deferral Experiments
+### Step 5 - Run the Deferral Experiments
 
 To reproduce the deferral testing run the script [Code/deferral/run_alert.py](Code/deferral/run_alert.py). These results can then be evaluated with the notebook [Code/deferral/process_results.ipynb](Code/deferral/process_results.ipynb)
 
