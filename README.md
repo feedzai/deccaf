@@ -40,7 +40,7 @@ conda activate deccaf-env
 
 ## DeCCaF Code
 
-To replicate the generation of FiFAR, as well as our experiments, please execute the following steps:
+To replicate the generation of the synthetic data, as well as our experiments, please execute the following steps:
 
 **Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly
 
