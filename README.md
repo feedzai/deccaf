@@ -68,7 +68,7 @@ To train the Alert Model, run the file [Code/alert_model/training_and_predicting
 Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
 
 ### Step 4 - Train classifier *h*
-As both DeCCaF and OvAshare the classifier *h*, we train it first, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
+As both DeCCaF and OvA share the classifier *h*, we train it first, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
 The classifier is trained first due to the fact that its performance is used as a reference to generate experts with a similar misclassification cost.
 
 ### Step 5 - Train DeCCaF and OvA systems
