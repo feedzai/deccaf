@@ -110,8 +110,8 @@ for scen in os.listdir('../../Data_and_models/data/alerts/'):
                 table.loc[:,expert] = np.maximum(test_expert_pred[expert],  1-test_expert_pred[expert])
             
             preds[env.split('#')[0] + '#' + env.split('#')[1]] = table
-        os.makedirs(f"../../Data_and_models/test_preds/{scen}-l_{l}/", exist_ok = True)
-        with open(f"../../Data_and_models/test_preds/{scen}-l_{l}/ova.pkl", "wb") as out_file:
+        os.makedirs(f"../../Data_and_models/deferral/test_preds/{scen}-l_{l}/", exist_ok = True)
+        with open(f"../../Data_and_models/deferral/test_preds/{scen}-l_{l}/ova.pkl", "wb") as out_file:
             pickle.dump(preds, out_file)
 
 
