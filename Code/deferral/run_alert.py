@@ -10,7 +10,9 @@ from joblib import Parallel, delayed
 def cat_checker(data, features, cat_dict):
     new_data = data.copy()
     for feature in features:
-        if new_data[feature].dtype.categories.to_list() != cat_dict[feature]:
+        if new_data[feature].dtype != 'category':
+            new_data[feature] = pd.Categorical(new_data[feature].values, categories=cat_dict[feature])
+        elif new_data[feature].dtype.categories.to_list() != cat_dict[feature]:
             new_data[feature] = pd.Categorical(new_data[feature].values, categories=cat_dict[feature])
     
     return new_data
