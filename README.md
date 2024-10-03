@@ -41,10 +41,18 @@ conda activate deccaf-env
 
 To replicate the generation of the synthetic data, as well as our experiments, please execute the following steps:
 
-**Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly
+**Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly.
 
 ### Step 1 - Clone the Repo and Download Dataset
 After cloning the repo, please extract the [Datasets, models and results](https://drive.google.com/file/d/16BLuZzdBLOsjs77WtytS7hZqe7aPDyTX/view?usp=sharing) file inside the repo's folder, ensuring that your directory looks like this
+
+Note that during the following steps, training of models and generation of results will be skipped if the output files already exist within the Data_and_models folder. This was done to ensure complete reproducibility and analysis of the source files used in the paper. If you wish, however, to run experiments from scratch, you will have to delete every folder and file within the Data directory, except for:
+
+- **Data_and_models/data/Base.csv**: the raw version of the BAF dataset
+- **Data_and_models/experts/**: the synthetic expert predictions used in the paper.
+- **Data_and_models/testbed/**: the expert capacity constraints and batches used in the paper. 
+
+The code for the expert and testbed generation is not made available, as the expert simulation framework was submitted as a contribution to a different venue, focusing on synthetic data generation.
 
 ```
 deccaf
