@@ -1,4 +1,6 @@
 name: deccaf-env
+channels:
+  - conda-forge
 dependencies:
   - pip
   - python=3.7
@@ -17,7 +19,6 @@ dependencies:
     - joblib
     - pyarrow
     - PyYAML
-    - conda-pack
     - ortools
     - optuna
     - fastparquet
