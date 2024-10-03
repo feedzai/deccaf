@@ -28,7 +28,7 @@ The submitted version of the paper and the appendix are available [here](Documen
 ### Creating the Python Environment
 
 Requirements:
-* anaconda3
+* miniforge3
   
 Before using any of the provided code, to ensure reproducibility, please create and activate the Python environment by running
 
@@ -65,7 +65,7 @@ To activate the Python environment with the necessary dependencies please follow
 ### Step 3 - Train the Alert Model and create the set of alerts
 To train the Alert Model, run the file [Code/alert_model/training_and_predicting.py](Code/alert_model/training_and_predicting.py), which will train the Alert Model and score all instances in months 4-8 of the BAF dataset.
 
-Then, run the file [Code/alert_data/preprocess.py](Code/alert_data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
+Then, run the file [Code/data/preprocess.py](Code/data/preprocess.py), to create the dataset of 30K alerts raised in months 4-8. This will be the set of instances used over all following processes.
 
 ### Step 4 - Train classifier *h*
 As both DeCCaF and OvA share the classifier *h*, we train it first, by running the script [Code/classifier_h/training.py](Code/classifier_h/training.py).
