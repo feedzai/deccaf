@@ -181,7 +181,6 @@ def deccaf_cp_deferral_func(capacities, batches, testset, expert_preds, model_pr
 
         if not status == cp_model.OPTIMAL and not status == cp_model.FEASIBLE:
             print('Solution not found!')
-            stop
             return None
 
         print('Batch solved')
