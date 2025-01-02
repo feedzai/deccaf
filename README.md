@@ -37,7 +37,7 @@ conda env create -f environment.yml
 conda activate deccaf-env
 ```
 
-## DeCCaF Code
+## Replicating Results
 
 To replicate the generation of the synthetic data, as well as our experiments, please execute the following steps:
 
