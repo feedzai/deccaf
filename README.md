@@ -16,7 +16,7 @@
 ## Resources
 In order to ensure complete reproducibility, we provide users with:
 * Code used to run experiments.
-* [Datasets, models and results](https://drive.google.com/file/d/16BLuZzdBLOsjs77WtytS7hZqe7aPDyTX/view?usp=sharing) used/produced in our experiments.
+* [Datasets, models and results](Data_and_models.zip) used/produced in our experiments.
    * Synthetically Generated Data - Expert predictions, training scenarios and capacity constraints
    * ML models - Alert Model, OvA Classifiers and Human Expertise Model
    * Results - Set of assignments and decisions resulting from the deferral experiments
@@ -44,7 +44,7 @@ To replicate the generation of the synthetic data, as well as our experiments, p
 **Attention**: Run each python script **inside** the folder where it is located, to ensure the relative paths within each script work correctly.
 
 ### Step 1 - Clone the Repo and Download Dataset
-After cloning the repo, please extract the [Datasets, models and results](https://drive.google.com/file/d/16BLuZzdBLOsjs77WtytS7hZqe7aPDyTX/view?usp=sharing) file inside the repo's folder, ensuring that your directory looks like this
+After cloning the repo, please extract the [Datasets, models and results](Data_and_models.zip) file inside the repo's folder, ensuring that your directory looks like this
 
 Note that during the following steps, training of models and generation of results will be skipped if the output files already exist within the Data_and_models folder. This was done to ensure complete reproducibility and analysis of the source files used in the paper. If you wish, however, to run experiments from scratch, you will have to delete every folder and file within the Data directory, except for:
 
